@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B40E50BE1B59F34F00681641 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B40E50BD1B59F34F00681641 /* CoreLocation.framework */; };
 		B41E458B1B313A410017D5C4 /* More.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B41E458A1B313A410017D5C4 /* More.storyboard */; };
 		B41E458F1B313A6C0017D5C4 /* MoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B41E458E1B313A6C0017D5C4 /* MoreViewController.m */; };
 		B41E45931B31567A0017D5C4 /* selectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B41E45921B31567A0017D5C4 /* selectViewController.m */; };
@@ -31,6 +32,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B40E50BD1B59F34F00681641 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		B41E458A1B313A410017D5C4 /* More.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = More.storyboard; sourceTree = "<group>"; };
 		B41E458D1B313A6C0017D5C4 /* MoreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoreViewController.h; sourceTree = "<group>"; };
 		B41E458E1B313A6C0017D5C4 /* MoreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoreViewController.m; sourceTree = "<group>"; };
@@ -57,6 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B40E50BE1B59F34F00681641 /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,6 +85,7 @@
 		B463547A1B301BFA009E4D8A = {
 			isa = PBXGroup;
 			children = (
+				B40E50BD1B59F34F00681641 /* CoreLocation.framework */,
 				B46354851B301BFA009E4D8A /* weather */,
 				B463549F1B301BFA009E4D8A /* weatherTests */,
 				B46354841B301BFA009E4D8A /* Products */,

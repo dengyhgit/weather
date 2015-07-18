@@ -17,75 +17,84 @@
 
 NSMutableDictionary * resDict;
 NSArray *d;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     [self.view setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"s.jpg"]]];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(selectCity:) name:@"selectCity" object:nil];
-    
-    //缓存存在时读缓存
-    NSString *urlStr=[NSString stringWithFormat:@"http://api.map.baidu.com/telematics/v3/weather?location=%%E7%%8F%%A0%%E6%%B5%%B7&output=json&ak=xfkg5isLkdyXDGAPYezFjtpb"];
-    NSURL *url=[NSURL URLWithString:urlStr];
-    NSURLRequest *request=[NSURLRequest requestWithURL:url];
-    NSData *data=[NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-    if(data == nil){
-        UIAlertView *alter = [[UIAlertView alloc] initWithTitle:nil message:@"网络连接失败！" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alter show];
-        return;
-    }
-    resDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
-    d =  resDict[@"results"];
-    
-    _weather01.text = @"";
-    _weather01.text = d[0][@"weather_data"][0][@"temperature"];
-    _currentWeather.text = @"";
-    _currentWeather.text = d[0][@"weather_data"][0][@"date"];
-    NSLog(@"%@",d[0][@"weather_data"][0][@"date"]);
-    NSString * urlWeb = d[0][@"weather_data"][0][@"dayPictureUrl"];
-    UIImage * result = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:urlWeb]]];
-    [_img01 setImage:result];
-    
-    NSString * urlWeb2 = d[0][@"weather_data"][0][@"nightPictureUrl"];
-    UIImage * result2 = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:urlWeb2]]];
-    [_img_n1 setImage:result2];
-    
-    _weather02.text = d[0][@"weather_data"][1][@"temperature"];
-    _tomorrow.text = d[0][@"weather_data"][1][@"date"];
-    urlWeb = d[0][@"weather_data"][1][@"dayPictureUrl"];
-    result = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:urlWeb]]];
-    [_img02 setImage:result];
-    
-    urlWeb2 = d[0][@"weather_data"][1][@"nightPictureUrl"];
-    result2 = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:urlWeb2]]];
-    [_img_n2 setImage:result2];
-    
-    
-    urlWeb = d[0][@"weather_data"][2][@"dayPictureUrl"];
-    result = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:urlWeb]]];
-    [_img03 setImage:result];
-    _weather03.text = d[0][@"weather_data"][2][@"temperature"];
-    _aftertomorrow.text = d[0][@"weather_data"][2][@"date"];
-    
-    urlWeb2 = d[0][@"weather_data"][2][@"nightPictureUrl"];
-    result2 = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:urlWeb2]]];
-    [_img_n3 setImage:result2];
 
+    [self startLocation];
+    
     
 }
 
+
+//开始定位
+-(void)startLocation{
+  
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    [self.locationManager requestAlwaysAuthorization];
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    self.locationManager.distanceFilter = kCLDistanceFilterNone;
+    [self.locationManager startUpdatingLocation];
+    
+}
+//定位代理经纬度回调
+-(void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
+    NSLog(@"%@",[NSString stringWithFormat:@"经度:%3.5f\n纬度:%3.5f",newLocation.coordinate.latitude,newLocation.coordinate.longitude]);
+    CLGeocoder * geoCoder = [[CLGeocoder alloc] init];
+    [geoCoder reverseGeocodeLocation:newLocation completionHandler:^(NSArray *placemarks, NSError *error) {
+        for (CLPlacemark * placemark in placemarks) {
+            NSDictionary *info = [placemark addressDictionary];
+            // Country(国家) State(城市) SubLocality(区)
+            NSLog(@"%@",info);
+            NSString * st = [info objectForKey:@"City"];
+            NSLog(@"-------%@", [info objectForKey:@"City"]);
+            if([st isEqual:@"珠海市"]){
+                NSThread * thread = [[NSThread alloc] initWithTarget:self selector:@selector(update:) object:@"0"];
+                [thread start];
+            }
+            if([st isEqual:@"广州市"]){
+                NSThread * thread = [[NSThread alloc] initWithTarget:self selector:@selector(update:) object:@"1"];
+                [thread start];
+            }
+            if([st isEqual:@"深圳市"]){
+                NSThread * thread = [[NSThread alloc] initWithTarget:self selector:@selector(update:) object:@"2"];
+                [thread start];
+            }
+            if([st isEqual:@"北京市"]){
+                NSThread * thread = [[NSThread alloc] initWithTarget:self selector:@selector(update:) object:@"3"];
+                [thread start];
+            }
+        }
+    }];
+    [self.locationManager stopUpdatingLocation];
+    
+}
+/**
+ *  <#Description#>
+ *
+ *  @param cityid cityid 城市编号
+ */
 -(void)update:(NSString*)cityid{
     NSString *urlStr;
+    //珠海
     if([cityid isEqual:@"0"]){
         urlStr=[NSString stringWithFormat:@"http://api.map.baidu.com/telematics/v3/weather?location=%%E7%%8F%%A0%%E6%%B5%%B7&output=json&ak=xfkg5isLkdyXDGAPYezFjtpb"];
     }
+    //广州
     if([cityid isEqual:@"1"]){
         
         urlStr=[NSString stringWithFormat:@"http://api.map.baidu.com/telematics/v3/weather?location=%%E5%%B9%%BF%%E5%%B7%%9E&output=json&ak=xfkg5isLkdyXDGAPYezFjtpb"];
     }
+    //深圳
     if([cityid isEqual:@"2"]){
         urlStr=[NSString stringWithFormat:@"http://api.map.baidu.com/telematics/v3/weather?location=%%E6%%B7%%B1%%E5%%9C%%B3&output=json&ak=xfkg5isLkdyXDGAPYezFjtpb"];
     }
+    //北京
     if([cityid isEqual:@"3"]){
         urlStr=[NSString stringWithFormat:@"http://api.map.baidu.com/telematics/v3/weather?location=%%E5%%8C%%97%%E4%%BA%%AC&output=json&ak=xfkg5isLkdyXDGAPYezFjtpb"];
     }
@@ -147,25 +156,29 @@ NSArray *d;
 - (IBAction)updateWeather:(id)sender {
     
     if([self.navigationItem.title isEqual:@"珠海"]){
-        [self update:@"0"];
+        NSThread * thread = [[NSThread alloc] initWithTarget:self selector:@selector(update:) object:@"0"];
+        [thread start];
     }
     if([self.navigationItem.title isEqual:@"广州"]){
-        [self update:@"1"];
+        NSThread * thread = [[NSThread alloc] initWithTarget:self selector:@selector(update:) object:@"1"];
+        [thread start];
     }
     if([self.navigationItem.title isEqual:@"深圳"]){
-        [self update:@"2"];
+        NSThread * thread = [[NSThread alloc] initWithTarget:self selector:@selector(update:) object:@"2"];
+        [thread start];
     }
     if([self.navigationItem.title isEqual:@"北京"]){
-        [self update:@"3"];
+        NSThread * thread = [[NSThread alloc] initWithTarget:self selector:@selector(update:) object:@"3"];
+        [thread start];
     }
     
 }
 
 - (IBAction)onclickMore:(id)sender {
-    UIStoryboard *mainStoryBoard=[UIStoryboard storyboardWithName:@"More" bundle:nil];
-    MoreViewController *morePage=[mainStoryBoard instantiateViewControllerWithIdentifier:@"moreNavigation"];
-    morePage.modalTransitionStyle=UIModalTransitionStyleCrossDissolve;
-    morePage.modalPresentationStyle=UIModalPresentationFormSheet;
+    UIStoryboard *mainStoryBoard = [UIStoryboard storyboardWithName:@"More" bundle:nil];
+    MoreViewController *morePage = [mainStoryBoard instantiateViewControllerWithIdentifier:@"moreNavigation"];
+    morePage.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    morePage.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentViewController:morePage animated:YES completion:nil];
 }
 
@@ -176,7 +189,6 @@ NSArray *d;
     
     if([cityid isEqual:@"0"]){
         self.navigationItem.title  = @"珠海";
-        
     }
     if([cityid isEqual:@"1"]){
        
@@ -190,7 +202,8 @@ NSArray *d;
     }
     
     
-    [self update:cityid];
+    NSThread * thread = [[NSThread alloc] initWithTarget:self selector:@selector(update:) object:cityid];
+    [thread start];
 }
 @end
 

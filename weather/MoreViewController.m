@@ -77,7 +77,6 @@ NSArray * array;
 #pragma mark 点击cell事件
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    NSLog(@"点了第%ld行",(long)indexPath.row);
     [self dismissViewControllerAnimated:YES completion:^{
     
         NSString * str = [NSString stringWithFormat: @"%d", (int)indexPath.row ];
