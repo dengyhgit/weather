@@ -27,6 +27,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *weather03;
 
 @property (weak, nonatomic) IBOutlet UILabel *currentWeather;
+@property (weak, nonatomic) IBOutlet UILabel *weather;
+@property (weak, nonatomic) IBOutlet UILabel *wind;
 
 @property (weak, nonatomic) IBOutlet UIImageView *img01;
 @property (weak, nonatomic) IBOutlet UIImageView *img02;
@@ -37,7 +39,10 @@
 - (IBAction)updateWeather:(id)sender;
 - (IBAction)onclickMore:(id)sender;
 
+- (IBAction)onclickTomorrow:(id)sender;
 
+
+- (IBAction)onclickAfter:(id)sender;
 
 @end
 
